@@ -25,6 +25,11 @@ body:
     attributes:
       label: Betroffene App bzw. Bereich
   - type: input
+    id: design
+    attributes:
+      label: Design
+      description: Version und Bildschirm aus handoff/, falls die Aufgabe einen Entwurf umsetzt
+  - type: input
     id: bezug
     attributes:
       label: Bezug

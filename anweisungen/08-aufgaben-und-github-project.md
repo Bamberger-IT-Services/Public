@@ -74,6 +74,22 @@ Die Einrichtung ändert Einstellungen bei GitHub und braucht deshalb einmal Tobi
 - Löst eine Entscheidung Arbeit aus, entsteht ein Issue mit Verweis auf `E-nn`. Im Dashboard
   steht bei der Entscheidung die Issue-Nummer.
 
+## Neue Design-Version
+
+Für Entwürfe aus Claude Design gilt zusätzlich [06](06-qualitaet-und-doku.md) ›
+Design-Übergabe.
+
+1. **Ablegen:** Die neue Version kommt per PR nach `handoff/`.
+2. **Planen, noch nicht bauen:** Claude schreibt den Abgleich Design ↔ Code fort und legt ein
+   Epic „Design vX umsetzen“ an, mit einem Sub-Issue je Bildschirm oder Funktion. Jedes
+   Sub-Issue nennt den Pfad in `handoff/`, die Akzeptanzkriterien und als Prüfung „im
+   Browser gegen den Entwurf geprüft, Bildschirmfotos im PR“.
+3. Alles landet im Backlog. Claude schlägt die Reihenfolge vor, Tobias legt sie in Ready fest.
+4. Lässt der Entwurf etwas offen oder widerspricht er diesen Anweisungen, entsteht eine
+   Entscheidung (`E-nn`), und das Issue bekommt `blocked` (siehe oben).
+5. **Umsetzen** wie gewohnt: ein Issue je PR. Sind alle Sub-Issues erledigt, schließt Claude
+   das Epic.
+
 ## Technische Schulden
 
 - Label `technische-schuld`, im Text die Art (Code, Architektur, Test, Abhängigkeit, Doku,

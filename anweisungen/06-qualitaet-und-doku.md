@@ -131,9 +131,16 @@ Bis zur Zielbreite gibt es nirgends waagrechtes Scrollen.
 
 - Entwürfe (z. B. aus Claude Design) sind **Referenz für Aussehen und Abläufe, kein Code**.
   Umgesetzt wird neu, optisch 1:1.
+- Die Übergabe kommt **per PR ins Repo**, nicht nur in den Chat. Vorgabe ist der Ordner
+  `handoff/`. So arbeiten jeder Chat und Codex mit derselben Quelle, und eine neue Version
+  ist als Diff sichtbar.
 - Je Version gibt es eine Änderungsdatei. Ältere Versionen liegen unter `versionen/vN/`.
   Überholte Dateien werden als abgelöst gekennzeichnet, damit nie zwei Quellen gelten.
 - Ein **Abgleich Design ↔ Code** hält je Bildschirm fest: umgesetzt / teilweise / fehlt.
+  Was fehlt oder nur teilweise steht, ist ein Issue ([08](08-aufgaben-und-github-project.md)).
+- **„Optisch 1:1“ wird geprüft:** im Browser gegen den Bildschirm aus dem Entwurf, in
+  derselben Breite und in Hell und Dunkel. Bildschirmfotos von Entwurf und Umsetzung stehen
+  im PR.
 - Widerspricht ein Entwurf diesen Anweisungen (z. B. Passwortregeln, Kontrast, Fokus),
   gelten die Anweisungen. Der Entwurf bekommt einen Vermerk für die nächste Version.
 
