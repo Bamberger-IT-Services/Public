@@ -128,7 +128,7 @@ jobs:
           cache-from: ${{ vars.EIGENER_RUNNER == '' && format('type=gha,scope={0}', matrix.name) || '' }}
           cache-to: ${{ vars.EIGENER_RUNNER == '' && format('type=gha,mode=max,scope={0}', matrix.name) || '' }}
       # Bekannte Lücken im Image: Bericht in der Zusammenfassung des Laufs; bricht nicht ab,
-      # damit ein Release nicht an einer Lücke ohne Fix hängt. Funde → Aufgabe im Projekt.
+      # damit ein Release nicht an einer Lücke ohne Fix hängt. Funde → Issue im Projekt.
       # Scanner-Images immer mit fester Version, nie „latest“ (Lieferketten-Angriffe auf Scanner gab es).
       - name: Image scannen (Trivy)
         env:

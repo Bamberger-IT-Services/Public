@@ -35,6 +35,6 @@
 - schlecht: …
 
 ## Maßnahmen
-| Nr. | Maßnahme | Art (verhindern / früher erkennen / schneller beheben) | Aufgabe |
+| Nr. | Maßnahme | Art (verhindern / früher erkennen / schneller beheben) | Issue |
 |---|---|---|---|
-| 1 | … | … | A-nn |
+| 1 | … | … | #nr |

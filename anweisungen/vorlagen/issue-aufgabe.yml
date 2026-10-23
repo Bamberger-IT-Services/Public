@@ -1,0 +1,36 @@
+# Vorlage: .github/ISSUE_TEMPLATE/aufgabe.yml – Anweisung 08
+name: Aufgabe
+description: Funktion, Fehler oder Aufgabe für das Board
+# ANPASSEN: Nummer des GitHub-Projects („<Projekt> Roadmap“), damit neue Issues dort landen
+projects: ["Bamberger-IT-Services/NUMMER"]
+body:
+  - type: textarea
+    id: ziel
+    attributes:
+      label: Ziel
+      description: Ein Satz aus Sicht der Nutzer. Was ist danach möglich?
+    validations:
+      required: true
+  - type: textarea
+    id: akzeptanz
+    attributes:
+      label: Akzeptanzkriterien
+      description: Prüfbar formuliert. Erst wenn alle erfüllt sind, ist das Issue erledigt.
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: input
+    id: bereich
+    attributes:
+      label: Betroffene App bzw. Bereich
+  - type: input
+    id: bezug
+    attributes:
+      label: Bezug
+      description: Entscheidung (E-nn), andere Issues, früher A-nn
+  - type: textarea
+    id: hinweise
+    attributes:
+      label: Hinweise
+      description: Randfälle, Links, Bildschirmfotos

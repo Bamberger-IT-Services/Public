@@ -22,11 +22,14 @@ Gilt in jedem Projekt, im Chat genauso wie im Code.
 
 ## Entwicklerdashboard
 
-- Jedes Projekt hat `entwickler-dashboard/` (`index.html` + `daten.js`) als Merkzettel für
-  offene Aufgaben (`A-nn`), Entscheidungen (`E-nn`) und Verlauf.
+- Jedes Projekt hat `entwickler-dashboard/` (`index.html` + `daten.js`) für
+  **Entscheidungen** (`E-nn`) und **Verlauf**, dazu ein Link auf das GitHub-Project.
+- Aufgaben stehen nicht im Dashboard, sondern als Issues im Code-Repo
+  ([08](08-aufgaben-und-github-project.md), Tobias, 23.10.2026).
 - Am Ende jeder Arbeitsrunde `daten.js` pflegen. `stand` kommt aus
   `TZ=Europe/Berlin date +"%d.%m.%Y %H:%M"`, nie geschätzt. Dazu ein Satz im `verlauf`.
 - Entschiedenes nicht löschen, sondern `status: "entschieden"` mit Antwort eintragen.
+  Löst die Entscheidung Arbeit aus, steht die Issue-Nummer dabei.
 
 ## Arbeiten im Hintergrund
 
