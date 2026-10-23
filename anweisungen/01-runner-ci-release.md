@@ -44,7 +44,7 @@ Produktiv-VM:  git pull  →  docker compose pull  →  docker compose up -d
 | Labels: `self-hosted, linux, x64, bits`. | `bits` = „eigene Maschine von Bamberger IT-Services“. Die Labels sind in jedem Projekt gleich. |
 | Nur für **private** Repos. In der Gruppe „Default“ bleibt „Allow public repositories“ aus. | Bei öffentlichen Repos könnte jeder per Pull Request Code auf der VM ausführen. Ein öffentliches Repo prüft auf GitHubs Rechnern (siehe 2.). |
 | Ein Runner-Dienst, Jobs laufen nacheinander. | Tests nutzen feste Ports. Zwei Runner auf derselben VM würden sich stören. |
-| Wöchentliches Aufräumen (`docker system prune`, älter als 7 Tage) per Cron. | Die Platte läuft sonst voll. |
+| **Platz sichern:** vor jedem Job aufräumen, sobald weniger als 25 GB frei sind (Runner-Hook), jede Nacht gründlich (Build-Cache höchstens 20 GB) und `fstrim`. Die VM-Platte in Proxmox mit „Discard“. | Eine volle Platte hat am 23.10.2026 Runner-VM und Proxmox-Host lahmgelegt. Docker-Cache und Test-Volumes wachsen schnell. |
 
 ### Einrichten (einmalig, Tobias)
 
@@ -60,7 +60,8 @@ Produktiv-VM:  git pull  →  docker compose pull  →  docker compose up -d
    ```
    Das Skript installiert Docker und die Werkzeuge, legt den Benutzer `github-runner` an,
    meldet den Runner mit Label `bits` bei der Organisation an, startet ihn als Dienst und
-   plant das Aufräumen. Prüfen: `sudo systemctl status 'actions.runner.*'` zeigt
+   richtet das Aufräumen ein. Ein erneuter Aufruf **ohne Token** bringt eine bestehende
+   Runner-VM auf den neuesten Stand, ohne einen laufenden Job zu unterbrechen. Prüfen: `sudo systemctl status 'actions.runner.*'` zeigt
    `active (running)`, in GitHub steht der Runner auf „Idle“.
 4. **Umschalten – je Repo:** Repo › Settings › Secrets and variables › Actions › Reiter
    Variables › New repository variable: `EIGENER_RUNNER` = `["self-hosted","bits"]`, genau so
