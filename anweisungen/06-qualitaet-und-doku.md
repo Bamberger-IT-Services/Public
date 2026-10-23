@@ -209,7 +209,8 @@ eigene, abrufbare Doku.
 ## Technische Schulden
 
 - Jede bekannte Schwachstelle im Code, in Tests, Abhängigkeiten, Doku oder Betrieb wird eine
-  Aufgabe im Dashboard, mit Art (Code, Architektur, Test, Abhängigkeit, Doku, Betrieb).
+  Issue mit Label `technische-schuld` und Art (Code, Architektur, Test, Abhängigkeit, Doku,
+  Betrieb), siehe [08](08-aufgaben-und-github-project.md).
 - **Rangfolge:** (Auswirkung + Risiko) × (6 − Aufwand), je 1–5. Die oberen Punkte kommen
   in das nächste Release, neben den Funktionen.
 - Bei jedem Minor-Release prüft Claude die Liste. Ein Punkt verschwindet erst, wenn er
@@ -221,5 +222,5 @@ eigene, abrufbare Doku.
 - Fachbegriffe auf Deutsch im Code, wenn das Projekt es so hält (z. B. `mietvertrag`,
   `buchung`). Technische Begriffe bleiben englisch.
 - Beträge in Cent (Ganzzahl), Datum als ISO im Code, formatiert erst in der Oberfläche.
-- Commits auf Deutsch, im Imperativ oder als kurze Beschreibung. Der Bezug (`A-nn`, `E-nn`)
+- Commits auf Deutsch, im Imperativ oder als kurze Beschreibung. Der Bezug (`#nr`, `E-nn`)
   steht im PR.

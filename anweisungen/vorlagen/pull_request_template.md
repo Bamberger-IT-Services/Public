@@ -1,6 +1,6 @@
 <!-- Vorlage: .github/pull_request_template.md – Anweisung 01 -->
 ## Worum geht es?
-<!-- Kurz: was ändert sich für Nutzer bzw. Betrieb, mit Bezug (A-…, E-…, Issue) -->
+<!-- Kurz: was ändert sich für Nutzer bzw. Betrieb, mit Bezug (Closes #…, E-…) -->
 
 ## Änderungen
 - 

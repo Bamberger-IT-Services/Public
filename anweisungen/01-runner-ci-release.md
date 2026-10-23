@@ -147,7 +147,7 @@ runs-on: ${{ fromJSON(vars.EIGENER_RUNNER || '"ubuntu-latest"') }}
 1. **Release-PR** `release/X.Y.Z`: Versionen, Sperrdateien, CHANGELOG mit Datum,
    Release-Notiz. CI grün → Merge. Vorher gilt die **Release-Prüfliste**:
    - CI auf dem Release-Stand grün, inklusive Datenbanktests und Image-Probe;
-   - keine offenen kritischen Fehler (Dashboard, Issues);
+   - keine offenen kritischen Fehler (Issues vom Typ Bug mit `prio:hoch`);
    - Migrationen in der CI vom letzten Release aus durchgelaufen (Update-Weg, nicht nur
      Neuinstallation);
    - einmalige Schritte und Rückweg in der Release-Notiz;

@@ -10,7 +10,7 @@ Was zu tun ist, wenn im Betrieb etwas schiefgeht. Der Ablauf ist auf einen Betre
 | **S1** | App nicht nutzbar oder Datenverlust/Datenleck möglich | Anmeldung geht nicht, Datenbank weg, fremde Daten sichtbar | sofort; Rückfall auf die alte Version prüfen |
 | **S2** | wichtige Funktion gestört, kein Umweg | Buchungen speichern nicht, Mails gehen nicht raus | am selben Tag |
 | **S3** | einzelne Funktion gestört, Umweg vorhanden | ein Export scheitert, Bildvorschau fehlt | nächstes Release |
-| **S4** | Schönheitsfehler | Darstellung, Text | Aufgabe im Dashboard |
+| **S4** | Schönheitsfehler | Darstellung, Text | Issue (Bug) |
 
 Bei möglichem **Datenleck** (S1) gilt zusätzlich die Meldepflicht nach DSGVO Art. 33:
 innerhalb von 72 Stunden an die Aufsichtsbehörde, wenn ein Risiko für Betroffene besteht.
@@ -33,7 +33,7 @@ Claude erinnert daran, entscheidet es aber nicht.
 5. **Nachbereiten:** Ab S2 schreibt Claude einen **Störungsbericht**
    ([Vorlage](vorlagen/stoerungsbericht.md)) unter `docs/stoerungen/JJJJ-MM-TT-<kurz>.md`.
    Er ist ohne Schuldzuweisung, mit Zeitlinie, Ursache (5× „Warum?“) und Maßnahmen. Jede
-   Maßnahme wird eine Aufgabe im Dashboard.
+   Maßnahme wird ein Issue.
 
 ## Fehlersuche (für jeden Fehler, nicht nur im Betrieb)
 
