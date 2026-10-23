@@ -100,7 +100,7 @@ chmod 755 /etc/cron.weekly/runner-aufraeumen
 
 echo
 echo "Fertig. Runner: $NAME ($ZIEL_URL), Labels: self-hosted, linux, x64, ${LABELS//,/, }"
-echo "Jetzt in GitHub › Organisation › Settings › Secrets and variables › Actions › Variables"
-echo "(Repository access: Private repositories):"
+echo "Jetzt in JEDEM privaten Repo: Settings › Secrets and variables › Actions › Variables ›"
+echo "New repository variable (Organisations-Variablen gelten im kostenlosen Tarif nicht für private Repos):"
 echo '  EIGENER_RUNNER = ["self-hosted","bits"]'
 echo "Ab dann laufen die Workflows aller privaten Projekte auf diesem Runner (Rückweg: Variable löschen)."
