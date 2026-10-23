@@ -5,7 +5,7 @@
 # Image-Ziele im Job „image-probe“. Erwartet in package.json die Skripte
 # lint, typecheck, test, test:db (Tests mit Datenbank), build.
 #
-# Rechner: Organisations-Variable EIGENER_RUNNER (z. B. ["self-hosted","bits"]).
+# Rechner: Repo-Variable EIGENER_RUNNER (z. B. ["self-hosted","bits"], Anweisung 01 › 2).
 # Leer → GitHubs Rechner (ubuntu-latest); dann laufen DB-Tests und Image-Probe nur von Hand,
 # um GitHub-Minuten zu sparen.
 #

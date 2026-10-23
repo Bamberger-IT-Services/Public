@@ -62,14 +62,18 @@ Produktiv-VM:  git pull  →  docker compose pull  →  docker compose up -d
    meldet den Runner mit Label `bits` bei der Organisation an, startet ihn als Dienst und
    plant das Aufräumen. Prüfen: `sudo systemctl status 'actions.runner.*'` zeigt
    `active (running)`, in GitHub steht der Runner auf „Idle“.
-4. **Umschalten:** Organisation › Settings › Secrets and variables › Actions › Variables ›
-   New organization variable: `EIGENER_RUNNER` = `["self-hosted","bits"]`, Repository
-   access „Private repositories“.
+4. **Umschalten – je Repo:** Repo › Settings › Secrets and variables › Actions ›
+   Reiter „Variables“ › New repository variable: `EIGENER_RUNNER` = `["self-hosted","bits"]`.
+   Grund: Im Tarif **GitHub Free** gelten Variablen der Organisation nur für öffentliche
+   Repos; „Repository access: Private repositories“ lässt sich dort nicht wählen (festgestellt
+   bei Eunomia, 23.10.2026). Ohne die Repo-Variable landen die Jobs eines privaten Repos auf
+   GitHubs Rechnern und scheitern an der Abrechnung. Mit einem bezahlten Tarif (Team) reicht
+   stattdessen eine Organisations-Variable mit Zugriff „Private repositories“.
 
 War ein Runner bisher nur bei einem Repo angemeldet, gilt
 `sudo bash runner-einrichten.sh --umziehen <TOKEN>` (Organisations-Token). Danach den alten
-Eintrag im Repo unter Settings › Actions › Runners entfernen, ebenso eine alte
-Repo-Variable für den Runner.
+Eintrag im Repo unter Settings › Actions › Runners entfernen und die Repo-Variable
+`EIGENER_RUNNER` auf `["self-hosted","bits"]` setzen (alte Labels ersetzen).
 
 ## 2. Wo ein Job läuft: Variable `EIGENER_RUNNER`
 
@@ -79,11 +83,13 @@ Jeder Job wählt seinen Rechner so:
 runs-on: ${{ fromJSON(vars.EIGENER_RUNNER || '"ubuntu-latest"') }}
 ```
 
-- Variable leer oder gelöscht → alle Projekte laufen auf GitHubs Rechnern
-  (`ubuntu-latest`). Das ist der Rückweg, wenn die Runner-VM ausfällt. Es kostet
+- Gesetzt wird sie als **Repository-Variable** in jedem privaten Repo (GitHub Free, siehe
+  1. › Einrichten › 4). Eine Repository-Variable geht einer gleichnamigen
+  Organisations-Variable immer vor.
+- Variable leer oder gelöscht → das Repo läuft auf GitHubs Rechnern (`ubuntu-latest`). Das
+  ist der Rückweg, wenn die Runner-VM ausfällt (je Repo umstellen). Es kostet
   GitHub-Minuten, deshalb laufen dann Datenbanktests und Image-Probe nur von Hand.
-- Ein einzelnes Repo kann mit einer **Repository-Variable** gleichen Namens abweichen
-  (die geht vor), z. B. ein öffentliches Repo mit leerem Wert.
+- Öffentliche Repos setzen keine Variable und prüfen auf GitHubs Rechnern.
 - Unterschiede regelt der Workflow selbst (`vars.EIGENER_RUNNER != ''`): mehr
   Testprozesse, Docker-Builder `docker` mit bleibendem Cache statt GitHub-Cache.
 - Auf dem eigenen Runner ist Node **nicht** vorinstalliert. Jeder Job, der Node braucht,
@@ -214,8 +220,9 @@ runs-on: ${{ fromJSON(vars.EIGENER_RUNNER || '"ubuntu-latest"') }}
 
 ## Neues Projekt aufnehmen
 
-1. Repo **privat** in `Bamberger-IT-Services` anlegen. Runner und `EIGENER_RUNNER` gelten
-   sofort.
+1. Repo **privat** in `Bamberger-IT-Services` anlegen. Der Runner gilt sofort (Gruppe
+   „Default“, alle Repos); die Repo-Variable `EIGENER_RUNNER` = `["self-hosted","bits"]`
+   anlegen (1. › Einrichten › 4).
 2. Vorlagen aus der Tabelle oben übernehmen und die `ANPASSEN`-Stellen ausfüllen.
 3. `deploy/docker-compose.yaml` mit `${<PROJEKT>_VERSION:-latest}`, `docs/UPDATE.md`,
    `CHANGELOG.md`, `docs/releases/` anlegen.
