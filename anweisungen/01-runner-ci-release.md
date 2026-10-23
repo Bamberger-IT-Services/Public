@@ -145,6 +145,9 @@ runs-on: ${{ fromJSON(vars.EIGENER_RUNNER || '"ubuntu-latest"') }}
    - Migrationen in der CI vom letzten Release aus durchgelaufen (Update-Weg, nicht nur
      Neuinstallation);
    - einmalige Schritte und Rückweg in der Release-Notiz;
+   - **Dokumentation auf dem Stand der Version** ([06](06-qualitaet-und-doku.md) ›
+     Dokumentation je Version): Geändertes angepasst, Entfallenes entfernt, Bilder neu,
+     „Stand“-Zeilen und README-Tabelle „Dokumentation nach Version“ ergänzt;
    - Rückfall-Auslöser festgelegt (siehe 7).
    Erst dann fragt Claude nach dem OK zum Veröffentlichen.
 2. **GitHub-Release** `vX.Y.Z` auf `main` veröffentlichen. Den Text liefert die
