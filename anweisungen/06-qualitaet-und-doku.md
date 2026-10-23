@@ -8,7 +8,7 @@
 | Integration | vitest gegen Wegwerf-Datenbank | Dienste, RLS, Migrationen, API-Routen |
 | Ende-zu-Ende | Playwright | Kernabläufe: Anmeldung mit 2FA, je Modul ein Hauptweg, Rechte |
 | Barrierefreiheit | `@axe-core/playwright` in den E2E-Tests | keine Verstöße der Stufen „serious“/„critical“ |
-| Mobil | Playwright bei 390 px Breite | kein waagrechtes Scrollen, alles bedienbar |
+| Breite | Playwright bei 390 px bzw. 1024 px | Zielbreite je Oberfläche (siehe Oberfläche › Bildschirmbreiten), kein waagrechtes Scrollen |
 | Vertrag | vitest | gemeinsame Typen/Schemas einer API, die eine andere App nutzt (z. B. Telefon-App), auf beiden Seiten |
 | Jobs | vitest gegen Wegwerf-Datenbank | jeder Hintergrundjob zweimal ausgeführt = gleiches Ergebnis (idempotent) |
 | Rauchtest | CI (`image-probe`) und nach jedem Update | App startet, `/api/health` ist ok |
@@ -26,6 +26,35 @@
   übersprungen. Er bleibt nicht einfach wackelig im Lauf.
 
 ## Oberfläche
+
+### Gestaltungsgrundlage (Tobias, 23.10.2026: für alle Projekte)
+
+Grundlage ist der Skill **„Apple Design“**: flüssige, physische Oberflächen nach Apples
+WWDC-Grundsätzen, übertragen auf das Web. Daraus gilt mindestens:
+
+- **Rückmeldung beim Drücken**, nicht erst beim Loslassen. Keine künstlichen Verzögerungen.
+- **Direkt bewegen:** Was man zieht, folgt dem Finger bzw. der Maus 1:1.
+- **Unterbrechbar:** Jede Bewegung lässt sich mittendrin greifen und umkehren. Für alles
+  Greifbare gibt es Federn statt fester Animationen (Dämpfung 1,0 als Vorgabe, Federn nur
+  nach einer Wischbewegung).
+- **Gleicher Weg:** Was rechts hereinkommt, geht rechts wieder hinaus. Menüs und Popover
+  wachsen aus ihrem Auslöser.
+- **Glas** (`backdrop-filter`) nur für schwebende Ebenen wie Leisten und Blätter, nie Glas
+  auf Glas. Bei `prefers-reduced-transparency` werden die Flächen deckend.
+- **Systemschrift** mit Laufweite je Größe: groß enger, klein leicht weiter.
+
+Das Markenbild (Farben, Logo, Bildsprache) wählt jedes Projekt selbst.
+
+### Bildschirmbreiten (Tobias, 23.10.2026)
+
+| Oberfläche | Zielbreite |
+|---|---|
+| Anmeldung, Ersteinrichtung, Fehlerseiten | ab **390 px** voll bedienbar |
+| Kundenportale (z. B. Mieter) | ab **390 px** voll bedienbar |
+| Verwaltungsoberfläche **mit eigener Telefon-App** | ab **1024 px**. Darunter erscheint ein Hinweis auf die Telefon-App |
+| Verwaltungsoberfläche **ohne** Telefon-App | ab **390 px** voll bedienbar |
+
+Bis zur Zielbreite gibt es nirgends waagrechtes Scrollen.
 
 ### Barrierefreiheit (WCAG 2.2 AA)
 
@@ -66,11 +95,22 @@
   und nicht von einem CDN geladen.
 - **Bilder:** lokal, mit Lizenz und Namensnennung in `assets/…/README.md`. Platzhalterbilder
   werden vor dem Betrieb ersetzt.
+- **Eigene Farbthemen** (z. B. Markenfarbe je Konto) sind erlaubt (Tobias, 23.10.2026).
+  - Die Vorschau prüft den Kontrast nach WCAG.
+  - Ein Thema unter 4,5:1 für Text bzw. 3:1 für Bedienelemente lässt sich **nicht
+    speichern**. Die Vorschau schlägt dann eine passende Abstufung vor.
+  - Hell und Dunkel werden je für sich geprüft.
 
 ### Text und Ton
 
-- Deutsch, `lang="de"`. Die Ansprache ist **in einem Projekt überall gleich** (siehe dessen
-  Entscheidung).
+- Deutsch, `lang="de"`.
+- **Ansprache** (Tobias, 23.10.2026, für alle Projekte):
+  - **„Sie“**, wo Kunden lesen: Anmeldung, Ersteinrichtung, Kundenportale, E-Mails,
+    Dokumente.
+  - In der **Arbeitsoberfläche keine Anrede**, sondern neutrale Texte („Vertrag speichern“,
+    „Keine offenen Vorgänge“).
+  - Kein „du“ in Produkten. Für die Zusammenarbeit mit Claude bleibt es beim „du“
+    ([00](00-zusammenarbeit.md)).
 - Knöpfe sind Verben („Speichern“, „Vertrag anlegen“), die Navigation benennt den Inhalt.
   Keine VERSALIEN als Gestaltung, keine Emojis.
 - Fachbegriffe stehen in einem Glossar, die Oberfläche erklärt sie per Hilfe-Blase.

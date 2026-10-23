@@ -5,8 +5,16 @@ Zielbild für jedes Projekt mit Benutzerkonten. Maßstab ist OWASP ASVS 5.0, Lev
 
 ## Konten
 
-- Neue Benutzer kommen **per Einladung**. Eine Selbstregistrierung gibt es nur, wenn das
-  Produkt sie braucht, und dann begründet.
+- **Erstes Konto per Ersteinrichtung** (Tobias, 23.10.2026): Solange die Installation leer
+  ist, führt die App durch einen Einrichtungsablauf. Dort legt der Inhaber sein Konto mit
+  2FA an, dazu die Grunddaten (z. B. Firma). Abgesichert ist der Ablauf so:
+  - Er braucht einen **Einrichtungscode**, den nur die VM kennt: Er steht im Log beim ersten
+    Start oder in `deploy.env`. So kann niemand eine frisch installierte, schon erreichbare
+    Instanz übernehmen.
+  - Eine Datenbanksperre verhindert einen zweiten Inhaber.
+  - Danach ist der Ablauf dauerhaft zu.
+- Alle weiteren Benutzer kommen **nur per Einladung**. Es gibt keine offene Registrierung.
+  Die Selbstregistrierung im Auth-Dienst ist abgeschaltet (`GOTRUE_DISABLE_SIGNUP=true`).
 - Rollen werden **auf dem Server** geprüft, jede Aktion für sich. RLS ist die zweite Linie
   ([02](02-architektur.md)). Was eine Rolle nicht darf, zeigt die Oberfläche gar nicht erst.
 - Die Fehlermeldungen bei Anmeldung, Einladung und „Passwort vergessen“ sind **immer
@@ -22,6 +30,9 @@ Zielbild für jedes Projekt mit Benutzerkonten. Maßstab ist OWASP ASVS 5.0, Lev
 - Ein Passwortmanager muss funktionieren (`autocomplete`-Attribute, kein Einfügeverbot).
 
 ## Zweiter Faktor (2FA)
+
+Gilt für **Verwaltungskonten** (alle, die mehr als ihre eigenen Daten sehen). Für
+Kundenportale gilt der Abschnitt unten.
 
 - **TOTP (Authenticator-App) ist ab Werk Pflicht für jedes Konto.** Eingerichtet wird es
   bei der ersten Anmeldung, ohne 2FA gibt es keinen Zugriff.
@@ -45,11 +56,37 @@ Zielbild für jedes Projekt mit Benutzerkonten. Maßstab ist OWASP ASVS 5.0, Lev
   Sitzung einzeln beendbar, „alle anderen abmelden“.
 - **Inaktivität** beendet eine Sitzung nach 7 Tagen (Vorgabe, einstellbar). Die
   **Höchstdauer** liegt bei 30 Tagen, danach ist eine neue Anmeldung mit 2FA fällig.
+- Verwaltungskonten haben **kein** „Angemeldet bleiben“. Die Werte oben gelten fest.
 - Ändern sich Passwort oder 2FA, enden alle anderen Sitzungen.
 - Cookies sind `HttpOnly`, `Secure` und `SameSite=Lax` und tragen das Präfix `__Host-`, wo
   möglich.
-- Eine Telefon-App nutzt kurzlebige Zugriffstokens und Refresh-Tokens im sicheren Speicher
-  des Geräts (Keychain/Keystore), nie im normalen Speicher.
+
+## Telefon-App (Tobias, 23.10.2026: beide Wege)
+
+- **Zwei Wege zur Anmeldung**, der Nutzer wählt:
+  1. **Kopplung per QR-Code:** Den Code gibt es nur nach einer Anmeldung mit 2FA in der Web
+     App. Er gilt 2 Minuten und nur einmal und erzeugt ein Geräte-Token.
+  2. **Normale Anmeldung** auf dem Telefon: E-Mail, Passwort, 2FA.
+- Danach entsperrt **Biometrie** (Face ID, Fingerabdruck) bzw. die Geräte-PIN die App.
+  Biometrie gibt nur den sicheren Speicher frei, sie ist kein eigener Faktor auf dem
+  Server.
+- Jedes Telefon steht in der **Geräteliste**, ist einzeln widerrufbar und läuft nach 30 Tagen
+  ohne Nutzung ab.
+- Tokens: kurzlebige Zugriffstokens, Refresh-Tokens nur im sicheren Speicher des Geräts
+  (Keychain/Keystore), nie im normalen Speicher.
+
+## Kundenportale (Tobias, 23.10.2026)
+
+Für Konten mit engen Rechten, die nur ihre eigenen Daten sehen (z. B. Mieter, Kunden):
+
+- **2FA freiwillig**: anbieten, aber nicht verlangen.
+- **„Auf diesem Gerät angemeldet bleiben“ erlaubt**: mit Haken 30 Tage, ohne Haken
+  12 Stunden. Zusätzlich gilt immer die Grenze von 7 Tagen Inaktivität. Der Haken ist ab
+  Werk **nicht** gesetzt.
+- Passwortregeln wie oben (mindestens 12 Zeichen, Leak-Liste). Ein Anmeldelink per Mail
+  ist als Alternative erlaubt.
+- Drosselung je Konto **und** IP (siehe Fehlversuche).
+- Ansprache mit „Sie“ ([06](06-qualitaet-und-doku.md)).
 
 ## Fehlversuche
 
