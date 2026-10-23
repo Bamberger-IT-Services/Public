@@ -14,8 +14,9 @@
 # Runners › „New runner“ › „New self-hosted runner“ (gilt eine Stunde). NICHT auf einer
 # Produktiv-VM ausführen: Die Tests starten eigene Datenbanken und Container.
 #
-# Idempotent: Ein zweiter Aufruf aktualisiert Pakete und lässt einen schon
-# registrierten Runner stehen (außer mit --umziehen).
+# Idempotent: Ein zweiter Aufruf (ohne Token) aktualisiert Pakete und Aufräumen und lässt
+# einen schon registrierten Runner stehen (außer mit --umziehen). Ein laufender Job wird nie
+# unterbrochen.
 set -euo pipefail
 
 UMZIEHEN=0
@@ -88,15 +89,50 @@ else
 fi
 ( cd "$VERZ" && ./svc.sh install "$NUTZER" >/dev/null 2>&1 || true; ./svc.sh start >/dev/null 2>&1 || true )
 
-echo "5/5 Aufräumen einplanen"
-# Alte Images/Build-Cache wöchentlich entfernen, damit die Platte nicht vollläuft.
-rm -f /etc/cron.weekly/helios-runner-aufraeumen   # Name bis 2026-10
-cat > /etc/cron.weekly/runner-aufraeumen <<'CRON'
+echo "5/5 Platz sichern"
+# Die Platte darf nie volllaufen (23.10.2026: volle Platte legte Runner-VM und Proxmox lahm).
+# 1) Vor JEDEM Job: unter 25 GB frei → alte Container, Images, Volumes und Build-Cache weg.
+# 2) Jede Nacht: gründlich aufräumen (Build-Cache auf 20 GB begrenzen) und freien Platz per
+#    fstrim an Proxmox zurückgeben (VM-Platte mit „Discard“ einstellen).
+rm -f /etc/cron.weekly/helios-runner-aufraeumen /etc/cron.weekly/runner-aufraeumen   # alte Namen
+cat > /usr/local/bin/runner-aufraeumen <<'SKRIPT'
 #!/bin/sh
-docker system prune -af --filter "until=168h" >/dev/null 2>&1 || true
-docker builder prune -af --filter "until=168h" >/dev/null 2>&1 || true
+# Aufruf: runner-aufraeumen [mindest-frei-in-GB]  (ohne Angabe: immer gründlich)
+GRENZE="${1:-}"
+FREI="$(df --output=avail -BG / | tail -n 1 | tr -dc 0-9)"
+if [ -n "$GRENZE" ] && [ "$FREI" -ge "$GRENZE" ]; then exit 0; fi
+echo "runner-aufraeumen: ${FREI} GB frei – räume auf"
+docker container prune -f >/dev/null 2>&1 || true
+docker image prune -af --filter "until=24h" >/dev/null 2>&1 || true
+docker volume prune -af >/dev/null 2>&1 || true
+docker builder prune -af --max-used-space 20gb >/dev/null 2>&1 \
+  || docker builder prune -af --keep-storage 20GB >/dev/null 2>&1 || true
+find /opt/actions-runner/_diag -name '*.log' -mtime +7 -delete 2>/dev/null || true
+journalctl --vacuum-size=500M >/dev/null 2>&1 || true
+echo "runner-aufraeumen: jetzt $(df --output=avail -BG / | tail -n 1 | tr -dc 0-9) GB frei"
+SKRIPT
+chmod 755 /usr/local/bin/runner-aufraeumen
+cat > "$VERZ/vor-dem-job.sh" <<'HOOK'
+#!/bin/sh
+/usr/local/bin/runner-aufraeumen 25
+HOOK
+chmod 755 "$VERZ/vor-dem-job.sh"; chown "$NUTZER:$NUTZER" "$VERZ/vor-dem-job.sh"
+if ! grep -q '^ACTIONS_RUNNER_HOOK_JOB_STARTED=' "$VERZ/.env" 2>/dev/null; then
+  echo "ACTIONS_RUNNER_HOOK_JOB_STARTED=$VERZ/vor-dem-job.sh" >> "$VERZ/.env"
+  # Der Dienst liest .env nur beim Start. Neu starten, aber nie mitten in einem Job.
+  if pgrep -f Runner.Worker >/dev/null 2>&1; then
+    echo "    Hinweis: Runner arbeitet gerade – später neu starten: sudo systemctl restart 'actions.runner.*'"
+  else
+    ( cd "$VERZ" && ./svc.sh stop >/dev/null 2>&1; ./svc.sh start >/dev/null 2>&1 ) || true
+  fi
+fi
+cat > /etc/cron.daily/runner-aufraeumen <<'CRON'
+#!/bin/sh
+/usr/local/bin/runner-aufraeumen >/dev/null 2>&1
+fstrim -a >/dev/null 2>&1 || true
 CRON
-chmod 755 /etc/cron.weekly/runner-aufraeumen
+chmod 755 /etc/cron.daily/runner-aufraeumen
+systemctl enable --now fstrim.timer >/dev/null 2>&1 || true
 
 echo
 echo "Fertig. Runner: $NAME ($ZIEL_URL), Labels: self-hosted, linux, x64, ${LABELS//,/, }"
