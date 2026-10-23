@@ -23,8 +23,13 @@ Zielbild für jedes Projekt mit Benutzerkonten. Maßstab ist OWASP ASVS 5.0, Lev
 
 ## Zweiter Faktor (2FA)
 
-- **TOTP (Authenticator-App) ist Pflicht für jedes Konto.** Eingerichtet wird es bei der
-  ersten Anmeldung, ohne 2FA gibt es keinen Zugriff.
+- **TOTP (Authenticator-App) ist ab Werk Pflicht für jedes Konto.** Eingerichtet wird es
+  bei der ersten Anmeldung, ohne 2FA gibt es keinen Zugriff.
+- **Schalter für den Inhaber** (Tobias, 23.10.2026): Der Inhaber bzw. höchste Admin kann die
+  2FA-Pflicht in den Einstellungen für die ganze Installation abschalten. Ab Werk ist sie
+  an. Das Abschalten verlangt die eigene 2FA, steht im Audit-Log und wird im Systemstatus
+  als Warnung angezeigt. Wer 2FA eingerichtet hat, behält sie auch bei abgeschalteter
+  Pflicht.
 - **10 Wiederherstellungscodes** bei der Einrichtung, je einmal verwendbar. Gespeichert
   werden sie als **HMAC-SHA-256 mit Pepper** (Schlüssel aus der Konfiguration), nicht
   als reiner Hash. Ein eingelöster Code verlangt sofort eine neue 2FA-Einrichtung.
