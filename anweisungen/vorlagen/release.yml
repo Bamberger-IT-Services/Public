@@ -6,8 +6,12 @@
 # 2. images:  jedes Image mit Tag X.Y.Z nach GHCR (eigener Runner: Builder „docker“ mit
 #             bleibendem Cache; GitHubs Rechner: GitHub-Actions-Cache).
 # 3. scannen: Trivy prüft die Images auf bekannte Lücken (HIGH/CRITICAL → Bericht).
-# 4. latest:  erst wenn ALLE Images oben sind: „latest“ für alle zugleich und Branch
-#             „stabil“ auf den Tag – nur für die höchste Version, nie für Vorab-Releases.
+# 4. abnahme: komplette Anlage auf dem Runner: vorige Version mit Testdaten starten,
+#             auf die neue Version updaten (Migrationen!), Kernabläufe per Playwright.
+#             Skript deploy/abnahme.sh im Projekt (Vorlage: vorlagen/abnahme.sh).
+# 5. latest:  erst wenn ALLE Images oben sind UND die Abnahme grün ist: „latest“ für alle
+#             zugleich und Branch „stabil“ auf den Tag – nur für die höchste Version, nie
+#             für Vorab-Releases.
 # Nachbauen: Actions › Release › „Run workflow“ mit dem Tag (z. B. v1.2.0).
 #
 # ANPASSEN: VERSIONSDATEIEN, Matrix „images“, Liste in „latest“.
@@ -41,6 +45,7 @@ jobs:
     outputs:
       version: ${{ steps.v.outputs.version }}
       latest: ${{ steps.v.outputs.latest }}
+      vorher: ${{ steps.v.outputs.vorher }}
       sha: ${{ steps.v.outputs.sha }}
       prefix: ${{ steps.v.outputs.prefix }}
     steps:
@@ -72,6 +77,8 @@ jobs:
           {
             echo "version=$version"
             echo "latest=$latest"
+            # vorige veröffentlichte Version (für die Abnahme des Update-Wegs); leer beim ersten Release
+            echo "vorher=$({ git tag -l 'v[0-9]*' | grep -v -- '-'; echo "$TAG"; } | sort -uV | awk -v t="$TAG" '$0==t{print p; exit} {p=$0}' | sed 's/^v//')"
             echo "sha=$(git rev-parse HEAD)"
             echo "prefix=ghcr.io/$(printf '%s' "$OWNER" | tr '[:upper:]' '[:lower:]')"
           } >> "$GITHUB_OUTPUT"
@@ -131,8 +138,47 @@ jobs:
             image --severity HIGH,CRITICAL --ignore-unfixed --no-progress --format table "$IMAGE" \
             | tee -a "$GITHUB_STEP_SUMMARY"
 
-  latest:
+  # Abnahme statt eigener Staging-VM (Tobias, 23.10.2026): läuft nur während des Release
+  # auf der Runner-VM, Ports Dev + 20000, räumt immer ab.
+  abnahme:
     needs: [pruefen, images]
+    runs-on: ${{ fromJSON(vars.EIGENER_RUNNER || '"ubuntu-latest"') }}
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ env.TAG }}
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4          # ANPASSEN: bei npm entfernen
+      - uses: actions/setup-node@v5
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"                     # ANPASSEN: "npm"
+      - run: pnpm install --frozen-lockfile # ANPASSEN: npm ci
+      - run: pnpm exec playwright install --with-deps chromium
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: Update von der vorigen Version und Kernabläufe
+        env:
+          VORHER: ${{ needs.pruefen.outputs.vorher }}
+          NEU: ${{ needs.pruefen.outputs.version }}
+        run: bash deploy/abnahme.sh "$VORHER" "$NEU"
+      - name: Playwright-Bericht sichern
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: abnahme-bericht
+          path: playwright-report/
+          retention-days: 14
+
+  latest:
+    needs: [pruefen, images, abnahme]
     if: needs.pruefen.outputs.latest == 'true'
     runs-on: ${{ fromJSON(vars.EIGENER_RUNNER || '"ubuntu-latest"') }}
     permissions:

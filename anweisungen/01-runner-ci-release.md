@@ -13,6 +13,7 @@ gilt diese Anweisung. Alles Nötige steht hier und in [`vorlagen/`](vorlagen/):
 | [`vorlagen/docker-compose-auszug.yaml`](vorlagen/docker-compose-auszug.yaml) | Bausteine für `deploy/docker-compose.yaml` |
 | [`vorlagen/runner-einrichten.sh`](vorlagen/runner-einrichten.sh) | wird nur auf der Runner-VM ausgeführt |
 | [`vorlagen/UPDATE.md`](vorlagen/UPDATE.md) | `docs/UPDATE.md` |
+| [`vorlagen/abnahme.sh`](vorlagen/abnahme.sh) | `deploy/abnahme.sh` (Abnahme im Release) |
 
 Stellen mit `ANPASSEN` in den Vorlagen gehören auf das Projekt zugeschnitten (Namen, Pfade,
 Images, Versionsdateien). Rohtext zum Herunterladen:
@@ -154,8 +155,15 @@ runs-on: ${{ fromJSON(vars.EIGENER_RUNNER || '"ubuntu-latest"') }}
      nach GHCR (`ghcr.io/bamberger-it-services/…`). Die Anmeldung läuft nur mit
      `GITHUB_TOKEN`, ohne persönliche Tokens;
    - scannt jedes Image mit Trivy (Bericht in der Zusammenfassung des Laufs);
-   - erst wenn **alle** Images oben sind: `latest` setzen (nur für die höchste Version,
-     nie für Vorab-Releases) und Branch **`stabil`** auf den Tag.
+   - **Abnahme** (Tobias, 23.10.2026, statt einer eigenen Staging-VM): Auf der Runner-VM
+     startet die komplette Anlage der **vorigen** Version mit Testdaten. Sie wird auf die
+     neue Version umgestellt, sodass die Migrationen wie auf der VM laufen. Dann prüft
+     Playwright die Kernabläufe. Danach wird immer abgeräumt. Vorlage:
+     [`vorlagen/abnahme.sh`](vorlagen/abnahme.sh), Ports Dev + 20000;
+   - erst wenn **alle** Images oben sind **und die Abnahme grün ist**: `latest` setzen
+     (nur für die höchste Version, nie für Vorab-Releases) und Branch **`stabil`** auf den
+     Tag. Scheitert die Abnahme, bleibt die Produktion auf der alten Version. Der Fehler
+     wird behoben und das Release als Patch-Version neu veröffentlicht.
 4. **Nachbauen:** Actions › Release › „Run workflow“ mit dem Tag. Gebaut wird der Stand
    des Tags.
 

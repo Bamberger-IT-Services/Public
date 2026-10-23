@@ -13,10 +13,10 @@ stehen im jeweiligen Projekt.
 | [02-architektur.md](02-architektur.md) | Nichtfunktionale Anforderungen, Stack, Datenbank mit RLS, Leistung, Migrationen, Jobs, Images |
 | [03-anmeldung-und-konten.md](03-anmeldung-und-konten.md) | Einladung, Passwörter, 2FA, Sitzungen, Fehlversuche |
 | [04-sicherheit.md](04-sicherheit.md) | automatische Prüfungen, Sicherheitsbericht, HTTP, Uploads, Geheimnisse, Protokolle, Datenschutz |
-| [05-betrieb.md](05-betrieb.md) | VM, Netz, Container-Härtung, Konfiguration, Sicherungen, Überwachung, Mail |
+| [05-betrieb.md](05-betrieb.md) | VM, Netz, Umgebungen und Ports (Dev, Staging, Abnahme), Container-Härtung, Konfiguration, Sicherungen, Überwachung, Mail |
 | [06-qualitaet-und-doku.md](06-qualitaet-und-doku.md) | Tests, Barrierefreiheit, Oberfläche, Doku-Gerüst, Entscheidungen (ADR), technische Schulden, Konventionen |
 | [07-stoerungen-und-runbooks.md](07-stoerungen-und-runbooks.md) | Störungsstufen, Ablauf, Fehlersuche, Störungsbericht, Pflicht-Runbooks |
-| [vorlagen/](vorlagen/) | `ci.yml`, `release.yml`, `dependabot.yml`, PR-Vorlage, Compose-Bausteine, Runner-Skript, `UPDATE.md`, ADR, Störungsbericht, Runbook |
+| [vorlagen/](vorlagen/) | `ci.yml`, `release.yml`, `dependabot.yml`, PR-Vorlage, Compose-Bausteine, Runner-Skript, `UPDATE.md`, `abnahme.sh`, ADR, Störungsbericht, Runbook |
 
 **Neues Projekt:** Es startet nach diesem Zielbild. **Bestehendes Projekt:** Es zieht nach,
 sobald es einen Bereich anfasst. Die Lücken stehen als Aufgaben im Entwicklerdashboard des
