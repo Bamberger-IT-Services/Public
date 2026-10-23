@@ -1,0 +1,64 @@
+# Vorlage: Auszug für deploy/docker-compose.yaml – Anweisungen 01, 02 und 05
+# Zeigt die festen Bausteine; Dienste, Umgebungsvariablen und Volumes je Projekt ergänzen.
+# Geheimnisse und Einstellungen stehen in /etc/<projekt>/deploy.env (nur root, 600) und
+# werden mit `--env-file` bzw. einem Symlink deploy/.env → /etc/<projekt>/deploy.env geladen.
+
+x-haertung: &haertung                 # für jeden eigenen Dienst
+  restart: unless-stopped
+  read_only: true
+  tmpfs: [/tmp]
+  cap_drop: [ALL]
+  security_opt: [no-new-privileges:true]
+  pids_limit: 256
+  logging:
+    driver: json-file
+    options: { max-size: "10m", max-file: "3" }
+
+services:
+  web:
+    <<: *haertung
+    # Version: latest = neuestes veröffentlichtes Release (Update per git pull + pull + up -d).
+    # Rückweg: PROJEKT_VERSION=1.2.0 in deploy.env und git checkout v1.2.0.
+    image: ghcr.io/bamberger-it-services/projekt-web:${PROJEKT_VERSION:-latest}
+    user: "1000:1000"
+    mem_limit: 1g
+    ports:
+      # Nur an die Adresse, auf der der Reverse Proxy zugreift – nie 0.0.0.0 ohne Grund.
+      - "${PROJEKT_BIND:-127.0.0.1}:3000:3000"
+    networks: [intern, extern]
+    depends_on:
+      migrate: { condition: service_completed_successfully }
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+  # Migrationen laufen bei jedem Start; vorher legt der Container selbst eine Sicherung an.
+  migrate:
+    <<: *haertung
+    image: ghcr.io/bamberger-it-services/projekt-migrator:${PROJEKT_VERSION:-latest}
+    restart: "no"
+    volumes:
+      - sicherungen:/sicherungen
+    networks: [intern]
+
+  worker:
+    <<: *haertung
+    image: ghcr.io/bamberger-it-services/projekt-worker:${PROJEKT_VERSION:-latest}
+    mem_limit: 1g
+    networks: [intern, extern]   # extern nur, wenn der Worker ins Internet muss (Mail, KI)
+
+  db:
+    image: supabase/postgres:17.6.1.136   # feste Version, Updates per Dependabot
+    restart: unless-stopped
+    networks: [intern]
+    # keine ports: die Datenbank ist von außen nicht erreichbar
+
+networks:
+  intern:
+    internal: true        # kein Internetzugang
+  extern: {}
+
+volumes:
+  sicherungen: {}
