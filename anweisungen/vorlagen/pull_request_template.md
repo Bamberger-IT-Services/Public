@@ -20,4 +20,6 @@
 - [ ] README / Einrichtung / Update angepasst – oder: Betrieb nicht betroffen
 - [ ] Sicherheitsbericht fortgeschrieben – oder: nicht betroffen
 - [ ] CHANGELOG-Abschnitt „unveröffentlicht“ ergänzt
+- [ ] Bildschirmfotos betroffener Seiten neu (`docs:bilder`), veraltete entfernt
+- [ ] Release-PR: gesamte Doku auf Stand der Version, README „Dokumentation nach Version“ ergänzt
 - [ ] Migration? Nummer geprüft; einmaliger Schritt für die Release-Notiz notiert

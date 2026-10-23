@@ -159,6 +159,42 @@ Bis zur Zielbreite gibt es nirgends waagrechtes Scrollen.
 - Nach jeder Arbeitsrunde den README-Stand und die offenen Issues mit dem tatsächlichen
   Stand abgleichen.
 
+## Dokumentation je Version (Tobias, 23.10.2026)
+
+Die Dokumentation auf GitHub zeigt immer den Stand eines Releases. Jede Version hat ihre
+eigene, abrufbare Doku.
+
+- **Bei jedem Release** bringt der Release-PR die gesamte Doku auf den Stand der neuen
+  Version ([01](01-runner-ci-release.md) › Release-Prüfliste):
+  - **Geänderte** Funktionen und Inhalte sind angepasst: Schritte, Knopfnamen, Felder,
+    Einstellungen.
+  - **Entfallene** Funktionen sind aus Handbuch, README und Anleitungen entfernt. Was in der
+    Oberfläche „Folgt später“ heißt, steht genauso in der Doku.
+  - **Bilder und Bildschirmfotos** sind neu aufgenommen. Alte, nicht mehr passende Bilder
+    werden gelöscht, nicht nur ersetzt.
+  - Jede Doku-Seite trägt oben **„Stand: TT.MM.JJJJ · Version X.Y.Z“**. Der README-Stand ist
+    aktualisiert.
+- **Bildschirmfotos:**
+  - Sie zeigen die **echte App im aktuellen Design**, aufgenommen von einem Skript
+    (`docs:bilder`, Playwright) mit Testdaten. Nie echte Daten.
+  - Formate: Desktop 1440 px, Telefon 390 px, hell; dunkel nur, wo es etwas zeigt.
+  - Feste Dateinamen je Bild, damit Verweise stabil bleiben.
+  - Ist ein Bereich noch nicht nach dem neuesten Designvorschlag umgesetzt, darf ein Bild aus
+    der Design-Übergabe stehen. Es ist dann deutlich als **„Entwurf (Design vN)“** beschriftet
+    und wird ersetzt, sobald der Bereich umgesetzt ist.
+- **Versionierte Doku:**
+  - Das Git-Tag `vX.Y.Z` friert die Doku dieser Version ein. Es gibt keine kopierten
+    Ordner je Version, eine Quelle reicht.
+  - Das README hat einen Abschnitt **„Dokumentation nach Version“** mit einer Zeile je
+    Minor-Version: Version · Datum · Handbuch
+    (`https://github.com/<org>/<repo>/tree/vX.Y.Z/docs/handbuch`) · Release-Notiz.
+  - Die neueste Zeile steht oben, ältere bleiben stehen.
+  - Der Text des GitHub-Release verlinkt das Handbuch genau dieses Tags.
+  - Bei einem Patch (X.Y.Z+1) wird die Zeile der Minor-Version auf das neue Tag gesetzt,
+    wenn sich die Doku geändert hat.
+- **`main`** zeigt die Doku der nächsten, noch unveröffentlichten Version. Seiten mit
+  neuen, noch nicht veröffentlichten Funktionen sind markiert („ab Version X.Y“).
+
 ## Entscheidungen festhalten
 
 - **Produktentscheidungen** (per Auswahlfrage, [00](00-zusammenarbeit.md)): kurzer Eintrag
