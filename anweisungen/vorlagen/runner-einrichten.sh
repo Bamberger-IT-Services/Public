@@ -124,7 +124,7 @@ if ! grep -q '^ACTIONS_RUNNER_HOOK_JOB_STARTED=' "$VERZ/.env" 2>/dev/null; then
     # Neustart einmalig nachholen, sobald kein Job mehr läuft (überlebt das Abmelden von SSH).
     systemctl stop runner-neustart >/dev/null 2>&1 || true
     systemd-run --unit=runner-neustart --description="Runner neu starten, sobald frei" /bin/sh -c \
-      'while pgrep -f Runner.Worker >/dev/null; do sleep 20; done; systemctl restart "actions.runner.*"' >/dev/null
+      'while pgrep -f "[R]unner.Worker" >/dev/null; do sleep 20; done; systemctl restart "actions.runner.*"' >/dev/null
     echo "    Runner arbeitet gerade – Neustart folgt automatisch, sobald der Job fertig ist"
     echo "    (prüfen: systemctl status runner-neustart)"
   else
