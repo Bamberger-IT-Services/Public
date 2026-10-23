@@ -11,7 +11,6 @@ gilt diese Anweisung. Alles Nötige steht hier und in [`vorlagen/`](vorlagen/):
 | [`vorlagen/dependabot.yml`](vorlagen/dependabot.yml) | `.github/dependabot.yml` |
 | [`vorlagen/pull_request_template.md`](vorlagen/pull_request_template.md) | `.github/pull_request_template.md` |
 | [`vorlagen/docker-compose-auszug.yaml`](vorlagen/docker-compose-auszug.yaml) | Bausteine für `deploy/docker-compose.yaml` |
-| [`vorlagen/runner-einrichten.sh`](vorlagen/runner-einrichten.sh) | wird nur auf der Runner-VM ausgeführt |
 | [`vorlagen/UPDATE.md`](vorlagen/UPDATE.md) | `docs/UPDATE.md` |
 | [`vorlagen/abnahme.sh`](vorlagen/abnahme.sh) | `deploy/abnahme.sh` (Abnahme im Release) |
 
@@ -53,15 +52,20 @@ Produktiv-VM:  git pull  →  docker compose pull  →  docker compose up -d
 2. **Token:** GitHub › Organisation › Settings › Actions › Runners › New runner › New
    self-hosted runner › Linux. Nur den Wert hinter `--token` kopieren. Er gilt eine Stunde
    und gehört nicht in Chats oder Notizen.
-3. **Auf der VM:**
+3. **Auf der VM:** Einrichtung, Umzug, Pflege, Fehlerhilfe und der Monitor für den Runner stehen
+   im Repository [Self-Hosted-Github-Runner-Monitor](https://github.com/Bamberger-IT-Services/Self-Hosted-Github-Runner-Monitor)
+   ([docs/RUNNER.md](https://github.com/Bamberger-IT-Services/Self-Hosted-Github-Runner-Monitor/blob/main/docs/RUNNER.md)).
+   Diese Anweisung bleibt die Regel, das Repository ist die Umsetzung. Kurz:
    ```bash
-   curl -fsSLO https://raw.githubusercontent.com/Bamberger-IT-Services/public/main/anweisungen/vorlagen/runner-einrichten.sh
-   sudo bash runner-einrichten.sh <TOKEN>
+   cd ~ && curl -fsSL https://github.com/Bamberger-IT-Services/Self-Hosted-Github-Runner-Monitor/archive/refs/heads/main.tar.gz | tar xz
+   sudo RUNNER_LABELS=bits ./Self-Hosted-Github-Runner-Monitor-main/einrichten.sh runner
    ```
-   Das Skript installiert Docker und die Werkzeuge, legt den Benutzer `github-runner` an,
-   meldet den Runner mit Label `bits` bei der Organisation an, startet ihn als Dienst und
-   richtet das Aufräumen ein. Ein erneuter Aufruf **ohne Token** bringt eine bestehende
-   Runner-VM auf den neuesten Stand, ohne einen laufenden Job zu unterbrechen. Prüfen: `sudo systemctl status 'actions.runner.*'` zeigt
+   Das Skript fragt nach der Organisation und dem Token (Eingabe unsichtbar). Es installiert
+   Docker und die Werkzeuge, legt den Benutzer `github-runner` an, meldet den Runner mit Label
+   `bits` bei der Organisation an, startet ihn als Dienst und richtet das Aufräumen ein. Ein
+   erneuter Aufruf (Token-Abfrage mit Enter überspringen) bringt eine bestehende Runner-VM auf
+   den neuesten Stand, ohne einen laufenden Job zu unterbrechen. Ohne `runner` am Ende richtet
+   dasselbe Skript zusätzlich den Monitor ein. Prüfen: `sudo systemctl status 'actions.runner.*'` zeigt
    `active (running)`, in GitHub steht der Runner auf „Idle“.
 4. **Umschalten – je Repo:** Repo › Settings › Secrets and variables › Actions › Reiter
    Variables › New repository variable: `EIGENER_RUNNER` = `["self-hosted","bits"]`, genau so
@@ -70,7 +74,8 @@ Produktiv-VM:  git pull  →  docker compose pull  →  docker compose up -d
    selbst. Den Runner der Organisation dürfen private Repos trotzdem nutzen.
 
 War ein Runner bisher nur bei einem Repo angemeldet, gilt
-`sudo bash runner-einrichten.sh --umziehen <TOKEN>` (Organisations-Token). Danach den alten
+`sudo RUNNER_LABELS=bits ./Self-Hosted-Github-Runner-Monitor-main/einrichten.sh runner --umziehen`
+(Organisations-Token). Danach den alten
 Eintrag im Repo unter Settings › Actions › Runners entfernen, ebenso eine alte
 Repo-Variable für den Runner.
 
