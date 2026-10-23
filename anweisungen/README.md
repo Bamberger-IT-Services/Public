@@ -16,7 +16,7 @@ stehen im jeweiligen Projekt.
 | [05-betrieb.md](05-betrieb.md) | VM, Netz, Umgebungen und Ports (Dev, Staging, Abnahme), Container-Härtung, Konfiguration, Sicherungen, Überwachung, Mail |
 | [06-qualitaet-und-doku.md](06-qualitaet-und-doku.md) | Tests, Barrierefreiheit, Oberfläche, Doku-Gerüst, Entscheidungen (ADR), technische Schulden, Konventionen |
 | [07-stoerungen-und-runbooks.md](07-stoerungen-und-runbooks.md) | Störungsstufen, Ablauf, Fehlersuche, Störungsbericht, Pflicht-Runbooks |
-| [08-aufgaben-und-github-project.md](08-aufgaben-und-github-project.md) | Aufgaben als Issues, GitHub-Project je Projekt, Labels, Abarbeiten, Umstellung bestehender Projekte |
+| [08-aufgaben-und-github-project.md](08-aufgaben-und-github-project.md) | Aufgaben als Issues, GitHub-Project je Projekt, Labels, Abarbeiten, neue Design-Version, Umstellung bestehender Projekte |
 | [vorlagen/](vorlagen/) | `ci.yml`, `release.yml`, `dependabot.yml`, PR-Vorlage, Compose-Bausteine, `UPDATE.md`, `abnahme.sh`, ADR, Störungsbericht, Runbook, Issue-Vorlage |
 
 **Neues Projekt:** Es startet nach diesem Zielbild. **Bestehendes Projekt:** Es zieht nach,
