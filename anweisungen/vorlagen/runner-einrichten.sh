@@ -24,7 +24,9 @@ TOKEN="${1:-}"
 ZIEL_URL="${RUNNER_ZIEL:-https://github.com/Bamberger-IT-Services}"
 NUTZER="${RUNNER_NUTZER:-github-runner}"
 NAME="${RUNNER_NAME:-runner-$(hostname -s)}"
-LABELS="bits"
+# Zusätzliche Labels nur für Übergänge, z. B. RUNNER_LABELS=bits,helios, solange alte
+# Workflows noch das Label „helios“ verlangen.
+LABELS="${RUNNER_LABELS:-bits}"
 VERZ="/opt/actions-runner"
 
 [ "$(id -u)" = 0 ] || { echo "Bitte mit sudo ausführen." >&2; exit 1; }
@@ -97,7 +99,7 @@ CRON
 chmod 755 /etc/cron.weekly/runner-aufraeumen
 
 echo
-echo "Fertig. Runner: $NAME ($ZIEL_URL), Labels: self-hosted, linux, x64, $LABELS"
+echo "Fertig. Runner: $NAME ($ZIEL_URL), Labels: self-hosted, linux, x64, ${LABELS//,/, }"
 echo "Jetzt in GitHub › Organisation › Settings › Secrets and variables › Actions › Variables"
 echo "(Repository access: Private repositories):"
 echo '  EIGENER_RUNNER = ["self-hosted","bits"]'
