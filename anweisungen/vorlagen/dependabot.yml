@@ -1,0 +1,24 @@
+# Vorlage: .github/dependabot.yml – Anweisung 01
+# Versions-Updates monatlich und gruppiert (Minor/Patch), Major-Versionen einzeln.
+# Sicherheitsupdates sofort: Repo › Settings › Code security › „Dependabot security updates“ an.
+# ANPASSEN: je Ordner mit eigener Sperrdatei ein npm-Eintrag; Dockerfile-Ordner.
+version: 2
+updates:
+  - package-ecosystem: npm          # gilt auch für pnpm (pnpm-lock.yaml)
+    directory: /
+    schedule: { interval: monthly }
+    open-pull-requests-limit: 5
+    groups:
+      entwicklung: { dependency-type: development, update-types: [minor, patch] }
+      laufzeit: { dependency-type: production, update-types: [minor, patch] }
+  - package-ecosystem: docker
+    directories: [/]                # ANPASSEN: alle Ordner mit Dockerfile
+    schedule: { interval: monthly }
+  - package-ecosystem: docker-compose
+    directory: /deploy              # ANPASSEN: Ordner der Compose-Datei
+    schedule: { interval: monthly }
+  - package-ecosystem: github-actions
+    directory: /
+    schedule: { interval: monthly }
+    groups:
+      actions: { patterns: ["*"] }
