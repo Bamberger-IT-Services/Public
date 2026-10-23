@@ -24,8 +24,11 @@ Claude erinnert daran, entscheidet es aber nicht.
    ([01](01-runner-ci-release.md) › Rückweg), kommt der zuerst. Bei Datenleck den
    betroffenen Zugang sperren.
 3. **Betroffene informieren:** bei S1/S2 ab ca. 30 Minuten Dauer. Kurz und sachlich: was ist
-   gestört, was wir tun, wann die nächste Info kommt. Kanal ist ein Hinweis in der App, wenn
-   sie läuft, sonst Mail.
+   gestört, was wir tun, wann die nächste Info kommt. Kanal ist der **Störungshinweis** in der
+   App, wenn sie läuft, sonst Mail. Das Muster dafür ist die Komponente „Störungshinweis“ im
+   Designsystem: ein Band oben in drei Stufen (Wartung, Eingeschränkt, Störung). Es entsteht
+   automatisch aus dem Systemstatus oder wird von einem Admin mit Zeitraum und Zielgruppe
+   gesetzt.
 4. **Fehler suchen** (siehe unten), beheben, mit Test absichern.
 5. **Nachbereiten:** Ab S2 schreibt Claude einen **Störungsbericht**
    ([Vorlage](vorlagen/stoerungsbericht.md)) unter `docs/stoerungen/JJJJ-MM-TT-<kurz>.md`.
