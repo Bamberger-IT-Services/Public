@@ -4,6 +4,22 @@ Zielbild für jedes Projekt. Ein neues Projekt startet so. Ein bestehendes zieht
 sobald es den Bereich anfasst, oder nach eigener Aufgabe. Eine bewusste Abweichung steht
 begründet in der `CLAUDE.md` des Projekts.
 
+## Nichtfunktionale Anforderungen (Vorgabe)
+
+Jedes Projekt nennt im README seine Werte. Ohne eigene Angabe gelten diese Vorgaben für
+selbst gehostete Fachanwendungen mit wenigen bis einigen hundert Nutzern:
+
+| Größe | Vorgabe | Folgt daraus |
+|---|---|---|
+| Verfügbarkeit | Arbeitszeit, kein 24/7-Bereitschaftsdienst; Wartung nach Ankündigung | eine VM ohne Ausfallserver ist in Ordnung |
+| **RPO** (höchster Datenverlust) | 24 Stunden, vor Updates 0 (Sicherung vor Migration) | tägliche Sicherung ([05](05-betrieb.md)); wer weniger braucht, ergänzt WAL-Archivierung |
+| **RTO** (höchste Ausfallzeit) | 4 Stunden | Wiederherstellung per Runbook geübt ([07](07-stoerungen-und-runbooks.md)) |
+| Antwortzeit | Seiten < 1 s (Median), Listen und Suche < 2 s bei realistischer Datenmenge | Indizes, Seitenweise Abfragen (siehe Leistung) |
+| Datenmenge | so geplant, dass 10× der heutigen Menge ohne Umbau läuft | keine vollständigen Tabellen in den Speicher laden |
+
+Was die Vorgaben übersteigt (Hochverfügbarkeit, viele Instanzen), braucht eine
+Architektur-Entscheidung (ADR, [06](06-qualitaet-und-doku.md)).
+
 ## Sprache und Laufzeit
 
 - **TypeScript** im strikten Modus, **Next.js** (App Router) und React in der jeweils
@@ -32,6 +48,19 @@ begründet in der `CLAUDE.md` des Projekts.
 - Interne Schemata (`app`, Sitzungen, Rate-Limits) sind nicht über PostgREST erreichbar.
 - **Beträge in Cent** als Ganzzahl, Zeitpunkte als `timestamptz`, Zeitzone der Anzeige
   `Europe/Berlin`.
+
+## Leistung
+
+- **Keine Abfrage ohne Grenze:** Jede Liste ist seitenweise (Cursor oder `limit`/`offset`
+  mit Obergrenze), jede Suche hat ein `limit`.
+- **Keine N+1-Abfragen:** Verknüpfte Daten in einer Abfrage (Join) oder gebündelt laden,
+  nicht in einer Schleife.
+- **Indizes** für jeden Fremdschlüssel und jede Spalte, nach der regelmäßig gefiltert oder
+  sortiert wird. Die Migration legt sie mit an. Langsame Abfragen werden mit
+  `EXPLAIN ANALYZE` geprüft.
+- **Zeitgrenzen:** `statement_timeout` für App-Verbindungen, Timeouts für jeden Aufruf nach
+  außen (Mail, KI, Banken). Lange Arbeit gehört in einen Hintergrundjob.
+- Große Dateien werden gestreamt, nicht komplett in den Speicher geladen.
 
 ## Migrationen
 

@@ -136,7 +136,14 @@ runs-on: ${{ fromJSON(vars.EIGENER_RUNNER || '"ubuntu-latest"') }}
 ## 6. Release (`release.yml`)
 
 1. **Release-PR** `release/X.Y.Z`: Versionen, Sperrdateien, CHANGELOG mit Datum,
-   Release-Notiz. CI grün → Merge.
+   Release-Notiz. CI grün → Merge. Vorher gilt die **Release-Prüfliste**:
+   - CI auf dem Release-Stand grün, inklusive Datenbanktests und Image-Probe;
+   - keine offenen kritischen Fehler (Dashboard, Issues);
+   - Migrationen in der CI vom letzten Release aus durchgelaufen (Update-Weg, nicht nur
+     Neuinstallation);
+   - einmalige Schritte und Rückweg in der Release-Notiz;
+   - Rückfall-Auslöser festgelegt (siehe 7).
+   Erst dann fragt Claude nach dem OK zum Veröffentlichen.
 2. **GitHub-Release** `vX.Y.Z` auf `main` veröffentlichen. Den Text liefert die
    Release-Notiz. Veröffentlicht wird erst nach Tobias' OK (Auswahlfrage). Danach klickt
    Claude im Browser oder Tobias selbst.
@@ -160,7 +167,19 @@ runs-on: ${{ fromJSON(vars.EIGENER_RUNNER || '"ubuntu-latest"') }}
   nie selbst.
 - **Update:** stößt Tobias an, ohne Skript. Die genauen Befehle stehen in
   [`vorlagen/UPDATE.md`](vorlagen/UPDATE.md).
-- **Rückweg:** feste alte Version in `deploy.env` und `git checkout v<alt>`.
+- **Nach dem Update** (Tobias, mit Claude):
+  - alle Dienste `healthy`, `migrate` fertig mit Sicherung;
+  - die Kernabläufe aus der Release-Notiz einmal durchklicken (Anmeldung mit 2FA, je
+    geändertem Bereich der Hauptweg);
+  - 15 Minuten lang Logs und Uptime Kuma auf Fehler beobachten.
+- **Rückfall-Auslöser:** Zurück auf die alte Version, wenn
+  - `migrate` scheitert,
+  - ein Dienst nicht `healthy` wird,
+  - die Anmeldung oder ein Kernablauf nicht funktioniert,
+  - oder die Logs wiederholt Fehler zeigen, die vorher nicht da waren.
+  Erst zurück, dann Fehler suchen ([07](07-stoerungen-und-runbooks.md)).
+- **Rückweg:** feste alte Version in `deploy.env` und `git checkout v<alt>`. Hat die neue
+  Version migriert, kommt zuerst die Sicherung aus dem Migrationslauf zurück.
 - GitHub kennt keine Zugangsdaten der VM (kein SSH-Deploy aus der CI). Die VM holt sich
   Updates selbst. Für private Images meldet sich die VM einmalig bei GHCR an, mit einem
   Token, das nur `read:packages` darf.
@@ -168,8 +187,17 @@ runs-on: ${{ fromJSON(vars.EIGENER_RUNNER || '"ubuntu-latest"') }}
 ## 8. Arbeitsweise mit Claude
 
 - Ein Branch je Aufgabe, ein Pull Request mit PR-Vorlage samt Doku-Fragen.
-- **Merge nach `main` macht Claude selbst**, sobald die CI grün und der PR konfliktfrei
-  ist. Danach bekommt Tobias eine kurze Info. Projekteigene Freigaben (z. B. ein OK vor
+- **Review vor dem Merge:** Weil kein Mensch freigibt, prüft Claude jeden PR vor dem Merge
+  selbst. Die vier Blickwinkel:
+  - Sicherheit (Injection, XSS/CSRF, Rechte, Geheimnisse, SSRF, Pfade);
+  - Leistung (N+1, fehlende Indizes, Abfragen ohne Grenze);
+  - Korrektheit (Randfälle, Fehlerbehandlung, Nebenläufigkeit);
+  - Wartbarkeit (Namen, Doppelungen, Tests).
+  Berührt ein PR Anmeldung, Rechte, Geld, Migrationen oder Löschen oder ist er groß
+  (über ~500 Zeilen), macht das ein **eigener Agent**, der den PR ohne Vorwissen liest. Das
+  Ergebnis steht im PR (Abschnitt „Review“). Kritische Funde werden vor dem Merge behoben.
+- **Merge nach `main` macht Claude selbst**, sobald Review erledigt, CI grün und der PR
+  konfliktfrei ist. Danach bekommt Tobias eine kurze Info. Projekteigene Freigaben (z. B. ein OK vor
   jeder neuen Etappe) bleiben bestehen.
 - PRs, die auf einem anderen Branch aufbauen, vorher auf `main` umstellen.
 - Doku im selben PR: Handbuch, README, Einrichtung, Update, Sicherheitsbericht.

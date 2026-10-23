@@ -72,7 +72,7 @@ jobs:
       - run: pnpm install --frozen-lockfile # ANPASSEN: npm ci
       - run: pnpm run lint
       - run: pnpm run typecheck
-      - run: pnpm test
+      - run: pnpm test -- --coverage        # Abdeckung im Lauf sichtbar (Anweisung 06)
       - run: pnpm run build
       # Bekannte Lücken in Laufzeit-Abhängigkeiten (hoch/kritisch) brechen ab.
       - run: pnpm audit --prod --audit-level high   # ANPASSEN: npm audit --omit=dev --audit-level=high

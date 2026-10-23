@@ -3,7 +3,8 @@
 <!-- Vorlage: docs/UPDATE.md – Anweisung 01. <projekt>, <PROJEKT> und Pfade anpassen. -->
 
 Die VM läuft auf `<PROJEKT>_VERSION=latest` und dem Branch `stabil`. Ein neues Release
-holst du so (`~/<projekt>` ist der Ordner mit dem Klon):
+holst du so (`~/<projekt>` ist der Ordner mit dem Klon). **Vorher die Release-Notiz lesen**
+(`docs/releases/vX.Y.Z.md`): Steht dort ein einmaliger Schritt, kommt er nach dem Update dran.
 
 ```bash
 cd ~/<projekt> && git pull && cd deploy \
@@ -18,9 +19,13 @@ sudo docker compose ps                          # alle Dienste „running“/„
 sudo docker compose logs migrate | tail -n 5    # Migrationen fertig, Sicherung angelegt
 ```
 
-Die Versionsnummer steht unten in der App. **Vor jedem Update die Release-Notiz lesen**
-(`docs/releases/vX.Y.Z.md`). Steht dort ein einmaliger Schritt, gehört er nach dem Update
-ausgeführt.
+Die Versionsnummer steht unten in der App. Danach die Kernabläufe aus der Release-Notiz
+einmal durchklicken und 15 Minuten lang Logs (`sudo docker compose logs -f --since 15m`)
+und die Statusseite beobachten.
+
+**Sofort zurück auf die alte Version** (siehe unten), wenn `migrate` scheitert, ein Dienst
+nicht `healthy` wird, die Anmeldung oder ein Kernablauf nicht geht oder neue Fehler
+wiederholt im Log stehen. Erst zurück, dann Ursache suchen.
 
 ## Erstmalig einrichten
 
