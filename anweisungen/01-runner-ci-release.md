@@ -76,8 +76,9 @@ Produktiv-VM:  git pull  →  docker compose pull  →  docker compose up -d
 War ein Runner bisher nur bei einem Repo angemeldet, gilt
 `sudo RUNNER_LABELS=bits ./Self-Hosted-Github-Runner-Monitor-main/einrichten.sh runner --umziehen`
 (Organisations-Token). Danach den alten
-Eintrag im Repo unter Settings › Actions › Runners entfernen, ebenso eine alte
-Repo-Variable für den Runner.
+Eintrag im Repo unter Settings › Actions › Runners entfernen und die Repo-Variable
+`EIGENER_RUNNER` auf `["self-hosted","bits"]` setzen. Alte Labels darin ersetzen, die
+Variable aber **nicht löschen**, sonst laufen die Jobs auf GitHubs Rechnern (siehe Schritt 4).
 
 ## 2. Wo ein Job läuft: Variable `EIGENER_RUNNER`
 
