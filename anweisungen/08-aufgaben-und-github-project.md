@@ -99,8 +99,8 @@ Design-Übergabe.
 ## Bestehende Projekte umstellen
 
 1. Laufende Arbeit sauber abschließen (PR, Merge, Dashboard gepflegt), erst dann umstellen.
-2. Offene `A-nn` aus `entwickler-dashboard/daten.js` und offene Code-Aufgaben aus anderen
-   Listen (z. B. Vikunja) sammeln.
+2. Die `A-nn` aus `entwickler-dashboard/daten.js` sammeln. Andere Aufgabenlisten außerhalb
+   des Repos werden nicht übernommen und nicht verändert.
 3. Für jeden Punkt im Code prüfen, ob er schon erledigt ist. Erledigtes wird kein Issue,
    sondern steht in einer Liste für Tobias.
 4. Offene Punkte als Issues bzw. Epics anlegen, im Text die alte Nummer nennen
@@ -108,4 +108,3 @@ Design-Übergabe.
    Tobias legt sie fest.
 5. Im Dashboard die Aufgabenliste leeren und den Link aufs Board eintragen. Die alten
    Einträge bleiben in der Git-Historie.
-6. In anderen Listen nichts löschen: den Issue-Link eintragen und als erledigt markieren.
