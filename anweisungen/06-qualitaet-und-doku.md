@@ -27,19 +27,75 @@
 
 ## Oberfläche
 
-- **Barrierefreiheit:** Ziel ist WCAG 2.2 AA:
-  - Kontrast der Tokens geprüft;
-  - vollständig per Tastatur bedienbar, sichtbarer Fokus;
-  - `prefers-reduced-motion` beachtet;
-  - Formulare mit Beschriftung und Fehlermeldung am Feld.
-- **Design-System:** Tokens aus einer Quelle, per Skript in CSS/TS übernommen. Schriftgrößen
-  in `rem`, Hell- und Dunkelmodus. Schriften lokal ausgeliefert, ohne Anfragen an fremde
-  Server.
+### Barrierefreiheit (WCAG 2.2 AA)
+
+- **Kontrast:** Text mindestens 4,5:1, auch gedämpfter Text. Bedienelemente und ihre Ränder
+  (Feld, Checkbox, Fokus) mindestens 3:1. Sehr leise Farben nur für Dekoration, nie für
+  lesbaren Text. Die Tokens werden automatisch auf Kontrast geprüft.
+- **Fokus:** `:focus-visible` mit einem vollen Ring von 2 px und Abstand, nie
+  halbtransparent und nie `outline: none` ohne Ersatz.
+- **Tastatur:** Alles ist per Tastatur bedienbar, in sinnvoller Reihenfolge.
+- **Zielgrößen:** mindestens 32 px im Web, 44 px auf dem Telefon. Eingabefelder auf dem
+  Telefon mit mindestens 16 px Schrift, sonst zoomt iOS beim Antippen.
+- **Einstellungen des Systems** werden beachtet:
+  - `prefers-reduced-motion`: keine Bewegung, keine automatisch wechselnden Bildstrecken;
+  - `prefers-reduced-transparency`: deckende statt gläserne Flächen;
+  - `prefers-contrast: more`: kräftigere Ränder;
+  - Hell- und Dunkelmodus.
+- **Farbe:** Status zeigt nie nur die Farbe, immer auch Text oder Symbol.
+- **Formulare:** Beschriftung, Fehlermeldung am Feld, `autocomplete`-Attribute.
+
+### Designsystem
+
+- **Eine Quelle:** `tokens.json` mit Hell und Dunkel. Ein Skript erzeugt daraus `tokens.css`
+  und `tokens.ts`; die Quelle darf px enthalten, die Ausgabe nutzt `rem`.
+- Dazu gehören:
+  - feste Schriftstile statt freier Größen;
+  - eine Skala für Radien und Abstände;
+  - Ziffern gleicher Breite (`tabular-nums`) für Beträge und Tabellen.
+- **Keine fest eingetragenen Farben** im Code. UI-Bibliotheken (z. B. shadcn) werden über
+  ihre Variablen auf die Projekt-Tokens abgebildet.
+- **Aufbau des Designsystem-Pakets:**
+  - `README.md` als Markenbuch: Grundsätze, Farben, Schrift, Ton;
+  - `components/<Name>/README.md` mit Regeln und `preview.html`;
+  - `assets/` mit Logo hell/dunkel und Bildern;
+  - `tokens.*`.
+- **Schrift:** Systemschrift (`system-ui`), kein Webfont. Gibt es doch einen Webfont, wird er
+  lokal ausgeliefert, ohne Anfragen an fremde Server.
+- **Icons:** eine Bibliothek je Projekt (Vorgabe Lucide, Strichstärke 2), lokal gebündelt
+  und nicht von einem CDN geladen.
+- **Bilder:** lokal, mit Lizenz und Namensnennung in `assets/…/README.md`. Platzhalterbilder
+  werden vor dem Betrieb ersetzt.
+
+### Text und Ton
+
+- Deutsch, `lang="de"`. Die Ansprache ist **in einem Projekt überall gleich** (siehe dessen
+  Entscheidung).
+- Knöpfe sind Verben („Speichern“, „Vertrag anlegen“), die Navigation benennt den Inhalt.
+  Keine VERSALIEN als Gestaltung, keine Emojis.
+- Fachbegriffe stehen in einem Glossar, die Oberfläche erklärt sie per Hilfe-Blase.
+- **Zustände:** Jede Liste hat einen Leer-, Lade- und Fehlerzustand. Leerzustände sind
+  ehrlich: ein Satz und eine Aktion, keine erfundenen Zahlen.
 - **Fehlerseiten:** `error.tsx`, `not-found.tsx` und `global-error.tsx` auf Deutsch, mit
   Fehler-ID und einem Weg zurück.
-- **Sprache:** Deutsch, `lang="de"`. Die Texte sprechen den Nutzer einheitlich an und
-  benutzen die Begriffe der Fachseite.
-- Leere Zustände, Ladezustände und Fehlerzustände gibt es für jede Liste.
+
+### KI in der Oberfläche
+
+- Die KI schlägt vor, der Mensch bestätigt. Nichts wird ohne Bestätigung gespeichert,
+  verschickt oder gebucht.
+- Vorschläge sind als KI-Vorschlag gekennzeichnet. Antworten nennen ihre Fundstelle
+  (Dokument, Datensatz).
+- Datenschutz: siehe [04](04-sicherheit.md).
+
+### Design-Übergabe
+
+- Entwürfe (z. B. aus Claude Design) sind **Referenz für Aussehen und Abläufe, kein Code**.
+  Umgesetzt wird neu, optisch 1:1.
+- Je Version gibt es eine Änderungsdatei. Ältere Versionen liegen unter `versionen/vN/`.
+  Überholte Dateien werden als abgelöst gekennzeichnet, damit nie zwei Quellen gelten.
+- Ein **Abgleich Design ↔ Code** hält je Bildschirm fest: umgesetzt / teilweise / fehlt.
+- Widerspricht ein Entwurf diesen Anweisungen (z. B. Passwortregeln, Kontrast, Fokus),
+  gelten die Anweisungen. Der Entwurf bekommt einen Vermerk für die nächste Version.
 
 ## Dokumentation im Repo
 
