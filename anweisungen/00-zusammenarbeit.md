@@ -48,3 +48,5 @@ Gilt in jedem Projekt, im Chat genauso wie im Code.
   GitHub oder anderen Diensten ändern) nur nach OK.
 - Merge nach `main` im Code-Repo: Das macht Claude selbst, sobald die CI grün und der PR
   konfliktfrei ist und das Review vor dem Merge erledigt ist (siehe [01](01-runner-ci-release.md)).
+  Das gilt auch für dieses `public`-Repo: Seine CI prüft Links und Vorlagen auf GitHubs
+  Rechnern, nicht auf dem eigenen Runner (Tobias, 23.10.2026).
