@@ -44,4 +44,4 @@ Gilt in jedem Projekt, im Chat genauso wie im Code.
 - Produktive Schritte (Release veröffentlichen, Produktiv-VM umstellen, Einstellungen bei
   GitHub oder anderen Diensten ändern) nur nach OK.
 - Merge nach `main` im Code-Repo: Das macht Claude selbst, sobald die CI grün und der PR
-  konfliktfrei ist (siehe [01](01-runner-ci-release.md)).
+  konfliktfrei ist und das Review vor dem Merge erledigt ist (siehe [01](01-runner-ci-release.md)).

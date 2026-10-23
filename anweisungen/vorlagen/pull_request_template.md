@@ -9,6 +9,12 @@
 - [ ] Lint, Typprüfung, Tests und Build lokal grün
 - [ ] Im Browser geprüft (falls Oberfläche betroffen)
 
+## Review (vor dem Merge)
+<!-- Sicherheit · Leistung · Korrektheit · Wartbarkeit. Bei Anmeldung/Rechten/Geld/Migrationen/
+     Löschen oder > ~500 Zeilen: Review durch einen eigenen Agenten. -->
+- Kritisch: keine | …
+- Hinweise: …
+
 ## Dokumentation
 - [ ] Handbuch angepasst – oder: Bedienung nicht betroffen
 - [ ] README / Einrichtung / Update angepasst – oder: Betrieb nicht betroffen
