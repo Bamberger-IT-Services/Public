@@ -1,0 +1,23 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  pruefen:
+    name: Anweisungen prüfen
+    # Bewusst GitHubs Rechner, nicht der eigene Runner: Öffentliche Repos dürfen dort
+    # keinen Code ausführen (Anweisung 01). Für öffentliche Repos kostenlos.
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Links, YAML- und Shell-Vorlagen prüfen
+        run: |
+          pip install --quiet pyyaml
+          python3 .github/scripts/pruefen.py
